@@ -46,7 +46,7 @@
 #define AUTHOR_PASSWORD "dxcr khen euuj xdum"
 
 /* Recipient email address */
-#define RECIPIENT_EMAIL "thanhthu040202@gmail.com"
+#define RECIPIENT_EMAIL "thuvtce170522@fpt.edu.vn"
 
 /* Declare the global used SMTPSession object for SMTP transport */
 SMTPSession smtp;
@@ -186,13 +186,10 @@ void loop() {
   //if receive data from arduino uno
   if (isReadString) {
     isReadString = false;
-    if (inputString.length() > 4 && inputString[0] == 'U' && inputString[1] == 'N' && inputString[2] == 'O') {
+    if (inputString.length() > 4 && inputString[0] == 'U' && inputString[1] == 'N' && inputString[2] == 'O' && inputString[3] == '3') {
       //get status
-      byte stt = inputString[3] - 48;
-      if (stt == 3) {
-        newPass = inputString.substring(4, 8);
-        sendEmail();
-      }
+      newPass = inputString.substring(4, 8);
+      sendEmail();
     }
     inputString = inputString.substring(0, 4);
     inputString.trim();
@@ -236,6 +233,7 @@ void loop() {
   server.handleClient();
   delay(100);
 }
+
 
 
 void sendEmail() {
@@ -322,10 +320,10 @@ void sendEmail() {
   message.author.email = AUTHOR_EMAIL; // should be the same email as config.login.email
  */
 
-    message.subject = F("Canh bao!");
+    message.subject = F("Cảnh báo!");
     message.addRecipient(F("Someone"), RECIPIENT_EMAIL);
 
-    String textMsg = "Sai mat khau 3 lan. Mat khau moi cua ban la: " + newPass;
+    String textMsg = "Nhập sai mật khẩu quá 3 lần. Vì lí do bảo mật, mật khẩu mới là: " + newPass;
     message.text.content = textMsg;
 
     /** If the message to send is a large string, to reduce the memory used from internal copying  while sending,
