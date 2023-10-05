@@ -4,6 +4,7 @@
 #include <RtcDS1302.h>
 #include <SoftwareSerial.h>
 #include <Arduino.h>
+#include <ThreeWire.h>
 
 #if defined(ESP32) || defined(ARDUINO_RASPBERRY_PI_PICO_W)
 #include <WiFi.h>
@@ -73,7 +74,7 @@ IPAddress subnet(255, 255, 255, 0);
 
 ESP8266WebServer server(80);
 //real time clock
-ThreeWire myWire(4, 5, 2);  // IO, SCLK, CE
+ThreeWire myWire(D1, D2, D4);  // IO, SCLK, CE
 RtcDS1302<ThreeWire> Rtc(myWire);
 SoftwareSerial s(3, 1);
 
@@ -87,10 +88,12 @@ bool locking = true;
 String newPass = "";
 
 
-void setup() {
-  Serial.begin(115200);
-  s.begin(115200);
 
+void setup() {
+  // Serial.begin(115200);
+  s.begin(115200);
+  myWire.begin();
+  Rtc.Begin();
   EEPROM.begin(512);
 
   //read number of history
@@ -165,6 +168,7 @@ void setup() {
 
   server.begin();
   // Serial.println("HTTP server started");
+  set_time();
 }
 
 void loop() {
@@ -232,6 +236,16 @@ void loop() {
   }
   server.handleClient();
   delay(100);
+}
+
+void set_time()
+{
+  Rtc.SetIsWriteProtected(false);
+  Rtc.SetIsRunning(false);
+  RtcDateTime t(2023, 10,  4,  22, 00, 00);
+//      Yr  Mth  Day  Hr  Min Sec  Mon
+ 
+  Rtc.SetDateTime(t);
 }
 
 
